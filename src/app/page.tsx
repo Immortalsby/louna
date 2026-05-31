@@ -43,6 +43,7 @@ function formatDate(date: Date) {
 
 export default async function HomePage() {
   await connection();
+  const realNow = new Date();
   const now = nowParis();
   const todayStart = new Date(
     now.getFullYear(),
@@ -101,9 +102,9 @@ export default async function HomePage() {
       lastStart = null;
     }
   }
-  // If still sleeping, count up to now
+  // If still sleeping, count up to now (use realNow for correct getTime())
   if (lastStart) {
-    totalSleepMs += now.getTime() - lastStart.getTime();
+    totalSleepMs += realNow.getTime() - lastStart.getTime();
   }
   const sleepHours = (totalSleepMs / (1000 * 60 * 60)).toFixed(1);
 
