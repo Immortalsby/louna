@@ -1,6 +1,6 @@
 import { toZonedTime } from "date-fns-tz";
 
-export const TZ = "Europe/Paris";
+export const TZ = process.env.TIMEZONE || "Europe/Paris";
 
 export function nowParis(): Date {
   return toZonedTime(new Date(), TZ);
