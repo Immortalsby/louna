@@ -96,7 +96,7 @@ export function AddFeeding() {
       {/* Floating action button */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-20 right-4 w-14 h-14 bg-[var(--primary)] text-white rounded-full shadow-lg flex items-center justify-center text-2xl active:bg-[var(--primary-dark)] transition-colors z-40"
+        className="fixed bottom-24 right-4 w-14 h-14 bg-[var(--primary)] text-white rounded-full shadow-lg flex items-center justify-center text-2xl active:bg-[var(--primary-dark)] transition-colors z-40"
         aria-label="添加喂养记录"
       >
         +
@@ -110,7 +110,7 @@ export function AddFeeding() {
             if (e.target === e.currentTarget) setOpen(false);
           }}
         >
-          <div className="bg-white w-full max-w-lg rounded-t-2xl p-6 animate-[slideUp_0.2s_ease-out]">
+          <div className="bg-white w-full max-w-lg rounded-t-2xl p-6 pb-8 animate-[slideUp_0.2s_ease-out]">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900">添加喂养记录</h2>
               <button
