@@ -6,9 +6,9 @@ const MENU_ITEMS = [
   { icon: "📸", label: "成长相册", href: "/photos", enabled: true },
   { icon: "🥣", label: "辅食管理", href: "/food", enabled: true },
   { icon: "🎯", label: "里程碑", href: "/milestones", enabled: true },
+  { icon: "💌", label: "时间胶囊", href: "/capsule", enabled: true },
   { icon: "💉", label: "疫苗日历", href: "/vaccines", enabled: true },
   { icon: "🌡️", label: "健康记录", href: "/health", enabled: true },
-  { icon: "📊", label: "数据导出", href: null, enabled: false },
   { icon: "⚙️", label: "设置", href: null, enabled: false },
 ];
 

@@ -16,6 +16,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Louna 成长日记",
   description: "记录宝宝的每一个成长瞬间",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Louna",
+  },
 };
 
 export const viewport: Viewport = {
