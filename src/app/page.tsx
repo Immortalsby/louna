@@ -4,6 +4,7 @@ import { prisma, getDefaultBabyId } from "@/lib/db";
 import { Card } from "@/components/ui/card";
 import { StatBox } from "@/components/ui/stat-box";
 import { PageHeader } from "@/components/ui/page-header";
+import { nowParis } from "@/lib/timezone";
 
 const BABY_ID = await getDefaultBabyId();
 const BABY_BIRTHDAY = new Date("2025-11-23");
@@ -40,7 +41,7 @@ function formatDate(date: Date) {
 
 export default async function HomePage() {
   await connection();
-  const now = new Date();
+  const now = nowParis();
   const todayStart = new Date(
     now.getFullYear(),
     now.getMonth(),

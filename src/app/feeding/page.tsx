@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { StatBox } from "@/components/ui/stat-box";
 import { FeedingChart } from "./feeding-chart";
 import { AddFeeding } from "./add-feeding";
+import { nowParis } from "@/lib/timezone";
 
 const BABY_ID = await getDefaultBabyId();
 
@@ -24,7 +25,7 @@ export default async function FeedingPage({
   await connection();
   const { period = "today" } = await searchParams;
 
-  const now = new Date();
+  const now = nowParis();
   const todayStart = new Date(
     now.getFullYear(),
     now.getMonth(),

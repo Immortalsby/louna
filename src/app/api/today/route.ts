@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { nowParis } from "@/lib/timezone";
 
 export async function GET() {
   try {
@@ -10,7 +11,7 @@ export async function GET() {
       );
     }
 
-    const now = new Date();
+    const now = nowParis();
     const todayStart = new Date(now);
     todayStart.setHours(0, 0, 0, 0);
     const todayEnd = new Date(now);

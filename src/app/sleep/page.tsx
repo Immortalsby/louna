@@ -24,7 +24,7 @@ type DaySleep = {
 
 export default async function SleepPage() {
   await connection();
-  const now = new Date();
+  const now = toZonedTime(new Date(), TZ);
   const todayStart = startOfDay(now);
 
   // Fetch today's sleep logs

@@ -2,6 +2,7 @@ import { connection } from "next/server";
 import { prisma, getDefaultBabyId } from "@/lib/db";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
+import { nowParis } from "@/lib/timezone";
 import { FoodChips } from "./food-chips";
 import { AddFood } from "./add-food";
 import { differenceInDays, format } from "date-fns";
@@ -33,7 +34,7 @@ export default async function FoodPage() {
     orderBy: { introduced: "desc" },
   });
 
-  const now = new Date();
+  const now = nowParis();
 
   const observingFoods = allFoods.filter((f) => f.status === "OBSERVING");
   const safeFoods = allFoods.filter((f) => f.status === "SAFE");
