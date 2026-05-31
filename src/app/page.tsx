@@ -27,6 +27,7 @@ function formatTime(date: Date) {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: process.env.TIMEZONE || "Europe/Paris",
   });
 }
 
@@ -36,6 +37,7 @@ function formatDate(date: Date) {
     month: "long",
     day: "numeric",
     weekday: "long",
+    timeZone: process.env.TIMEZONE || "Europe/Paris",
   });
 }
 

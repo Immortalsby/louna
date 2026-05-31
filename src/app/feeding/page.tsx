@@ -14,6 +14,7 @@ function formatTime(date: Date) {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
+    timeZone: process.env.TIMEZONE || "Europe/Paris",
   });
 }
 
