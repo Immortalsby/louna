@@ -42,8 +42,22 @@ model Baby {
   foodSafety   FoodSafety[]
   tempLogs     TempLog[]
   vaccineLogs  VaccineLog[]
+  photos       Photo[]
 
   @@map("babies")
+}
+
+model Photo {
+  id        String   @id @default(cuid())
+  babyId    String
+  baby      Baby     @relation(fields: [babyId], references: [id])
+  data      String   @db.Text
+  caption   String?
+  takenAt   DateTime
+  createdBy String   @default("hermes")
+  createdAt DateTime @default(now())
+
+  @@map("photos")
 }
 
 model FeedingLog {

@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
 
 const MENU_ITEMS = [
+  { icon: "📸", label: "成长相册", href: "/photos", enabled: true },
   { icon: "🥣", label: "辅食管理", href: "/food", enabled: true },
   { icon: "🎯", label: "里程碑", href: "/milestones", enabled: true },
   { icon: "💉", label: "疫苗日历", href: "/vaccines", enabled: true },

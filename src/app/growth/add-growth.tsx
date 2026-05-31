@@ -31,8 +31,8 @@ export function AddGrowth() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30">
-          <div className="w-full max-w-lg bg-white rounded-t-2xl p-5 pb-8 animate-slide-up">
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-black/30">
+          <div className="w-full max-w-lg bg-white rounded-t-2xl p-5 pb-[calc(env(safe-area-inset-bottom,0px)+2rem)] animate-slide-up">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900">
                 添加测量记录
