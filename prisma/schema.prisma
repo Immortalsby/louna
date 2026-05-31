@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum FeedingType {
+  MILK
+  SOLID
+}
+
+enum SleepEvent {
+  START
+  WAKE
+  NIGHT_WAKE
+}
+
+enum FoodStatus {
+  OBSERVING
+  SAFE
+  REACTED
+}
+
+enum UserRole {
+  PARENT
+  FAMILY
+}
+
+model Baby {
+  id       String   @id @default(cuid())
+  name     String
+  birthday DateTime
+  gender   String
+
+  feedingLogs  FeedingLog[]
+  sleepLogs    SleepLog[]
+  growthLogs   GrowthLog[]
+  milestones   Milestone[]
+  foodSafety   FoodSafety[]
+  tempLogs     TempLog[]
+  vaccineLogs  VaccineLog[]
+
+  @@map("babies")
+}
+
+model FeedingLog {
+  id        String      @id @default(cuid())
+  babyId    String
+  baby      Baby        @relation(fields: [babyId], references: [id])
+  type      FeedingType
+  ml        Int?
+  food      String?
+  amount    String?
+  time      DateTime
+  createdBy String
+  createdAt DateTime    @default(now())
+
+  @@map("feeding_logs")
+}
+
+model SleepLog {
+  id        String     @id @default(cuid())
+  babyId    String
+  baby      Baby       @relation(fields: [babyId], references: [id])
+  event     SleepEvent
+  time      DateTime
+  createdAt DateTime   @default(now())
+
+  @@map("sleep_logs")
+}
+
+model GrowthLog {
+  id        String   @id @default(cuid())
+  babyId    String
+  baby      Baby     @relation(fields: [babyId], references: [id])
+  date      DateTime
+  weightKg  Float?
+  heightCm  Float?
+  headCm    Float?
+  createdAt DateTime @default(now())
+
+  @@map("growth_logs")
+}
+
+model Milestone {
+  id          String   @id @default(cuid())
+  babyId      String
+  baby        Baby     @relation(fields: [babyId], references: [id])
+  description String
+  date        DateTime
+  photoUrl    String?
+  createdAt   DateTime @default(now())
+
+  @@map("milestones")
+}
+
+model FoodSafety {
+  id             String     @id @default(cuid())
+  babyId         String
+  baby           Baby       @relation(fields: [babyId], references: [id])
+  food           String
+  introduced     DateTime
+  observationEnd DateTime
+  status         FoodStatus
+  reaction       String?
+  createdAt      DateTime   @default(now())
+
+  @@map("food_safety")
+}
+
+model TempLog {
+  id        String   @id @default(cuid())
+  babyId    String
+  baby      Baby     @relation(fields: [babyId], references: [id])
+  temp      Float
+  time      DateTime
+  createdAt DateTime @default(now())
+
+  @@map("temp_logs")
+}
+
+model VaccineLog {
+  id            String    @id @default(cuid())
+  babyId        String
+  baby          Baby      @relation(fields: [babyId], references: [id])
+  name          String
+  scheduledDate DateTime
+  doneDate      DateTime?
+  batchNo       String?
+  reaction      String?
+  createdAt     DateTime  @default(now())
+
+  @@map("vaccine_logs")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(PARENT)
+  createdAt    DateTime @default(now())
+
+  @@map("users")
+}
