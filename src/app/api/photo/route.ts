@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma, getDefaultBabyId } from "@/lib/db";
 import { validateApiToken } from "@/lib/api-auth";
 
+const PHOTOS_BASE_URL = "https://louna-photos.bytech-solutions.cc";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const limit = parseInt(searchParams.get("limit") || "50", 10);
@@ -14,18 +16,16 @@ export async function GET(request: Request) {
       orderBy: { takenAt: "desc" },
       take: limit,
       skip: offset,
-      select: {
-        id: true,
-        caption: true,
-        takenAt: true,
-        createdBy: true,
-        createdAt: true,
-      },
     }),
     prisma.photo.count({ where: { babyId } }),
   ]);
 
-  return NextResponse.json({ photos, total, limit, offset });
+  const photosWithUrl = photos.map((p) => ({
+    ...p,
+    url: `${PHOTOS_BASE_URL}/${p.filename}`,
+  }));
+
+  return NextResponse.json({ photos: photosWithUrl, total, limit, offset });
 }
 
 export async function POST(request: Request) {
@@ -34,11 +34,11 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { data, caption, takenAt, createdBy } = body;
+  const { filename, caption, takenAt, createdBy } = body;
 
-  if (!data || typeof data !== "string") {
+  if (!filename || typeof filename !== "string") {
     return NextResponse.json(
-      { error: "Photo data (base64) is required" },
+      { error: "filename is required" },
       { status: 400 }
     );
   }
@@ -48,19 +48,15 @@ export async function POST(request: Request) {
   const photo = await prisma.photo.create({
     data: {
       babyId,
-      data,
+      filename,
       caption: caption || null,
       takenAt: takenAt ? new Date(takenAt) : new Date(),
       createdBy: createdBy || "hermes",
     },
-    select: {
-      id: true,
-      caption: true,
-      takenAt: true,
-      createdBy: true,
-      createdAt: true,
-    },
   });
 
-  return NextResponse.json(photo, { status: 201 });
+  return NextResponse.json(
+    { ...photo, url: `${PHOTOS_BASE_URL}/${photo.filename}` },
+    { status: 201 }
+  );
 }

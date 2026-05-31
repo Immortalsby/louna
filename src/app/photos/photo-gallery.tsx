@@ -5,6 +5,7 @@ import { format } from "date-fns";
 
 interface Photo {
   id: string;
+  url: string;
   caption: string | null;
   takenAt: string | Date;
   createdBy: string;
@@ -24,7 +25,7 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={`/api/photo/${photo.id}`}
+              src={photo.url}
               alt={photo.caption || "Louna"}
               className="w-full h-full object-cover"
               loading="lazy"
@@ -47,13 +48,16 @@ export function PhotoGallery({ photos }: { photos: Photo[] }) {
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`/api/photo/${selected.id}`}
+            src={selected.url}
             alt={selected.caption || "Louna"}
             className="max-w-full max-h-[80vh] object-contain rounded-lg"
             onClick={(e) => e.stopPropagation()}
           />
 
-          <div className="mt-4 text-center" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="mt-4 text-center"
+            onClick={(e) => e.stopPropagation()}
+          >
             {selected.caption && (
               <p className="text-white text-sm mb-1">{selected.caption}</p>
             )}
