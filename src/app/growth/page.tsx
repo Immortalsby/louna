@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma, getDefaultBabyId } from "@/lib/db";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatBox } from "@/components/ui/stat-box";
 import { GrowthChart } from "./growth-chart";
@@ -7,7 +7,7 @@ import { AddGrowth } from "./add-growth";
 import { getPercentileCurves } from "@/lib/who-data";
 import { differenceInMonths, differenceInDays } from "date-fns";
 
-const BABY_ID = process.env.BABY_ID!;
+const BABY_ID = await getDefaultBabyId();
 
 export default async function GrowthPage() {
   await connection();

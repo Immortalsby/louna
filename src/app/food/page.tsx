@@ -1,12 +1,12 @@
 import { connection } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma, getDefaultBabyId } from "@/lib/db";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
 import { FoodChips } from "./food-chips";
 import { AddFood } from "./add-food";
 import { differenceInDays, format } from "date-fns";
 
-const BABY_ID = process.env.BABY_ID!;
+const BABY_ID = await getDefaultBabyId();
 
 const SUGGESTED_FOODS: { category: string; items: string[]; age: string }[] = [
   {

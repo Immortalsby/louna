@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma, getDefaultBabyId } from "@/lib/db";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatBox } from "@/components/ui/stat-box";
 import { SleepTimeline } from "./sleep-timeline";
@@ -7,7 +7,7 @@ import { SleepChart } from "./sleep-chart";
 import { SleepActions } from "./sleep-actions";
 import { format, startOfDay, subDays } from "date-fns";
 
-const BABY_ID = process.env.BABY_ID!;
+const BABY_ID = await getDefaultBabyId();
 
 type SleepPeriod = {
   startHour: number;

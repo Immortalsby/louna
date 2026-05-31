@@ -1,12 +1,12 @@
 import { connection } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma, getDefaultBabyId } from "@/lib/db";
 import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
 import { StatBox } from "@/components/ui/stat-box";
 import { FeedingChart } from "./feeding-chart";
 import { AddFeeding } from "./add-feeding";
 
-const BABY_ID = process.env.BABY_ID!;
+const BABY_ID = await getDefaultBabyId();
 
 function formatTime(date: Date) {
   return date.toLocaleTimeString("zh-CN", {

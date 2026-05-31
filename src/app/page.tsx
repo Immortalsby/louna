@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { connection } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma, getDefaultBabyId } from "@/lib/db";
 import { Card } from "@/components/ui/card";
 import { StatBox } from "@/components/ui/stat-box";
 import { PageHeader } from "@/components/ui/page-header";
 
-const BABY_ID = process.env.BABY_ID!;
+const BABY_ID = await getDefaultBabyId();
 const BABY_BIRTHDAY = new Date("2025-11-23");
 
 function getAge(birthday: Date, now: Date) {

@@ -1,11 +1,11 @@
 import { connection } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma, getDefaultBabyId } from "@/lib/db";
 import { PageHeader } from "@/components/ui/page-header";
 import { MilestoneCard } from "./milestone-card";
 import { AddMilestone } from "./add-milestone";
 import { differenceInMonths, differenceInDays } from "date-fns";
 
-const BABY_ID = process.env.BABY_ID!;
+const BABY_ID = await getDefaultBabyId();
 
 function getAgeLabel(birthday: Date, milestoneDate: Date): string {
   const months = differenceInMonths(milestoneDate, birthday);

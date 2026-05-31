@@ -17,3 +17,17 @@ export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
+
+let _defaultBabyId: string | null = null;
+
+export async function getDefaultBabyId(): Promise<string> {
+  if (_defaultBabyId) return _defaultBabyId;
+  if (process.env.BABY_ID) {
+    _defaultBabyId = process.env.BABY_ID;
+    return _defaultBabyId;
+  }
+  const baby = await prisma.baby.findFirst({ orderBy: { birthday: "asc" } });
+  if (!baby) throw new Error("No baby found. Run POST /api/seed first.");
+  _defaultBabyId = baby.id;
+  return _defaultBabyId;
+}

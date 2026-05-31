@@ -1,9 +1,9 @@
 "use server";
 
-import { prisma } from "@/lib/db";
+import { prisma, getDefaultBabyId } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-const BABY_ID = process.env.BABY_ID!;
+const BABY_ID = await getDefaultBabyId();
 
 export async function addMilestone(description: string, dateStr?: string) {
   if (!description || description.trim().length === 0) {
