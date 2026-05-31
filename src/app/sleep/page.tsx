@@ -6,8 +6,10 @@ import { SleepTimeline } from "./sleep-timeline";
 import { SleepChart } from "./sleep-chart";
 import { SleepActions } from "./sleep-actions";
 import { format, startOfDay, subDays } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 
 const BABY_ID = await getDefaultBabyId();
+const TZ = "Europe/Paris";
 
 type SleepPeriod = {
   startHour: number;
@@ -47,9 +49,10 @@ export default async function SleepPage() {
     if (log.event === "START") {
       sleepStart = log.time;
     } else if (log.event === "WAKE" && sleepStart) {
-      const startHour =
-        sleepStart.getHours() + sleepStart.getMinutes() / 60;
-      const endHour = log.time.getHours() + log.time.getMinutes() / 60;
+      const zStart = toZonedTime(sleepStart, TZ);
+      const zEnd = toZonedTime(log.time, TZ);
+      const startHour = zStart.getHours() + zStart.getMinutes() / 60;
+      const endHour = zEnd.getHours() + zEnd.getMinutes() / 60;
       const durationMin =
         (log.time.getTime() - sleepStart.getTime()) / (1000 * 60);
 
@@ -64,13 +67,16 @@ export default async function SleepPage() {
 
   // If currently sleeping, count up to now
   if (sleepStart) {
-    const startHour =
-      sleepStart.getHours() + sleepStart.getMinutes() / 60;
-    const endHour = now.getHours() + now.getMinutes() / 60;
     const durationMin =
       (now.getTime() - sleepStart.getTime()) / (1000 * 60);
-    totalSleepMinutes += durationMin;
-    periods.push({ startHour, endHour, type: "sleep" });
+    if (durationMin > 0) {
+      const zStart = toZonedTime(sleepStart, TZ);
+      const zNow = toZonedTime(now, TZ);
+      const startHour = zStart.getHours() + zStart.getMinutes() / 60;
+      const endHour = zNow.getHours() + zNow.getMinutes() / 60;
+      totalSleepMinutes += durationMin;
+      periods.push({ startHour, endHour, type: "sleep" });
+    }
   }
 
   const totalHours = totalSleepMinutes / 60;
