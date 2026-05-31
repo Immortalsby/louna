@@ -24,7 +24,8 @@ type DaySleep = {
 
 export default async function SleepPage() {
   await connection();
-  const now = toZonedTime(new Date(), TZ);
+  const realNow = new Date();
+  const now = toZonedTime(realNow, TZ);
   const todayStart = startOfDay(now);
 
   // Fetch today's sleep logs
@@ -55,6 +56,7 @@ export default async function SleepPage() {
       const endHour = zEnd.getHours() + zEnd.getMinutes() / 60;
       const durationMin =
         (log.time.getTime() - sleepStart.getTime()) / (1000 * 60);
+      if (durationMin < 0) { sleepStart = null; continue; }
 
       totalSleepMinutes += durationMin;
       napCount++;
@@ -68,10 +70,10 @@ export default async function SleepPage() {
   // If currently sleeping, count up to now
   if (sleepStart) {
     const durationMin =
-      (now.getTime() - sleepStart.getTime()) / (1000 * 60);
+      (realNow.getTime() - sleepStart.getTime()) / (1000 * 60);
     if (durationMin > 0) {
       const zStart = toZonedTime(sleepStart, TZ);
-      const zNow = toZonedTime(now, TZ);
+      const zNow = now;
       const startHour = zStart.getHours() + zStart.getMinutes() / 60;
       const endHour = zNow.getHours() + zNow.getMinutes() / 60;
       totalSleepMinutes += durationMin;
