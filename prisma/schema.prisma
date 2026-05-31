@@ -47,15 +47,23 @@ model Baby {
   @@map("babies")
 }
 
+enum MediaType {
+  PHOTO
+  VIDEO
+  LIVE_PHOTO
+}
+
 model Photo {
-  id        String   @id @default(cuid())
-  babyId    String
-  baby      Baby     @relation(fields: [babyId], references: [id])
-  filename  String
-  caption   String?
-  takenAt   DateTime
-  createdBy String   @default("hermes")
-  createdAt DateTime @default(now())
+  id            String    @id @default(cuid())
+  babyId        String
+  baby          Baby      @relation(fields: [babyId], references: [id])
+  filename      String
+  videoFilename String?
+  mediaType     MediaType @default(PHOTO)
+  caption       String?
+  takenAt       DateTime
+  createdBy     String    @default("hermes")
+  createdAt     DateTime  @default(now())
 
   @@map("photos")
 }

@@ -23,6 +23,9 @@ export async function GET(request: Request) {
   const photosWithUrl = photos.map((p) => ({
     ...p,
     url: `${PHOTOS_BASE_URL}/${p.filename}`,
+    videoUrl: p.videoFilename
+      ? `${PHOTOS_BASE_URL}/${p.videoFilename}`
+      : null,
   }));
 
   return NextResponse.json({ photos: photosWithUrl, total, limit, offset });
@@ -34,7 +37,8 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { filename, caption, takenAt, createdBy } = body;
+  const { filename, videoFilename, mediaType, caption, takenAt, createdBy } =
+    body;
 
   if (!filename || typeof filename !== "string") {
     return NextResponse.json(
@@ -49,6 +53,8 @@ export async function POST(request: Request) {
     data: {
       babyId,
       filename,
+      videoFilename: videoFilename || null,
+      mediaType: mediaType || "PHOTO",
       caption: caption || null,
       takenAt: takenAt ? new Date(takenAt) : new Date(),
       createdBy: createdBy || "hermes",
@@ -56,7 +62,13 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json(
-    { ...photo, url: `${PHOTOS_BASE_URL}/${photo.filename}` },
+    {
+      ...photo,
+      url: `${PHOTOS_BASE_URL}/${photo.filename}`,
+      videoUrl: photo.videoFilename
+        ? `${PHOTOS_BASE_URL}/${photo.videoFilename}`
+        : null,
+    },
     { status: 201 }
   );
 }
