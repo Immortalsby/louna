@@ -42,6 +42,30 @@ export async function GET(request: NextRequest) {
   }
 }
 
+export async function DELETE(request: NextRequest) {
+  if (!validateApiToken(request)) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { searchParams } = request.nextUrl;
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return Response.json({ error: "id is required" }, { status: 400 });
+    }
+
+    await prisma.feedingLog.delete({ where: { id } });
+    return Response.json({ deleted: id });
+  } catch (error) {
+    console.error("Failed to delete feeding log:", error);
+    return Response.json(
+      { error: "Failed to delete feeding log" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: NextRequest) {
   if (!validateApiToken(request)) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
