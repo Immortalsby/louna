@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { nowParis } from "@/lib/timezone";
+import { nowParis, parisStartOfDay, parisEndOfDay } from "@/lib/timezone";
 
 export async function GET() {
   try {
@@ -12,10 +12,8 @@ export async function GET() {
     }
 
     const now = nowParis();
-    const todayStart = new Date(now);
-    todayStart.setHours(0, 0, 0, 0);
-    const todayEnd = new Date(now);
-    todayEnd.setHours(23, 59, 59, 999);
+    const todayStart = parisStartOfDay();
+    const todayEnd = parisEndOfDay();
 
     const timeFilter = { gte: todayStart, lte: todayEnd };
 

@@ -4,7 +4,7 @@ import { prisma, getDefaultBabyId } from "@/lib/db";
 import { Card } from "@/components/ui/card";
 import { StatBox } from "@/components/ui/stat-box";
 import { PageHeader } from "@/components/ui/page-header";
-import { nowParis } from "@/lib/timezone";
+import { nowParis, parisStartOfDay, parisEndOfDay } from "@/lib/timezone";
 
 const BABY_ID = await getDefaultBabyId();
 const BABY_BIRTHDAY = new Date("2025-11-23");
@@ -45,16 +45,8 @@ export default async function HomePage() {
   await connection();
   const realNow = new Date();
   const now = nowParis();
-  const todayStart = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate()
-  );
-  const todayEnd = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate() + 1
-  );
+  const todayStart = parisStartOfDay();
+  const todayEnd = parisEndOfDay();
 
   const age = getAge(BABY_BIRTHDAY, now);
 
@@ -62,26 +54,39 @@ export default async function HomePage() {
     prisma.feedingLog.findMany({
       where: {
         babyId: BABY_ID,
-        time: { gte: todayStart, lt: todayEnd },
+        time: { gte: todayStart, lte: todayEnd },
       },
       orderBy: { time: "desc" },
     }),
     prisma.sleepLog.findMany({
       where: {
         babyId: BABY_ID,
-        time: { gte: todayStart, lt: todayEnd },
+        time: { gte: todayStart, lte: todayEnd },
       },
       orderBy: { time: "asc" },
     }),
     prisma.tempLog.findMany({
       where: {
         babyId: BABY_ID,
-        time: { gte: todayStart, lt: todayEnd },
+        time: { gte: todayStart, lte: todayEnd },
       },
       orderBy: { time: "desc" },
       take: 1,
     }),
   ]);
+
+  // Detect overnight sleep carrying into today
+  const lastSleepBeforeToday = await prisma.sleepLog.findFirst({
+    where: {
+      babyId: BABY_ID,
+      time: { lt: todayStart },
+    },
+    orderBy: { time: "desc" },
+  });
+  const allSleepLogs =
+    lastSleepBeforeToday?.event === "START"
+      ? [lastSleepBeforeToday, ...sleepLogs]
+      : sleepLogs;
 
   // Calculate today's milk total
   const totalMilk = feedingLogs
@@ -94,7 +99,7 @@ export default async function HomePage() {
   // Calculate sleep hours from paired START/WAKE events
   let totalSleepMs = 0;
   let lastStart: Date | null = null;
-  for (const log of sleepLogs) {
+  for (const log of allSleepLogs) {
     if (log.event === "START") {
       lastStart = log.time;
     } else if (log.event === "WAKE" && lastStart) {
@@ -102,7 +107,6 @@ export default async function HomePage() {
       lastStart = null;
     }
   }
-  // If still sleeping, count up to now (use realNow for correct getTime())
   if (lastStart) {
     totalSleepMs += realNow.getTime() - lastStart.getTime();
   }
@@ -142,7 +146,7 @@ export default async function HomePage() {
     }
   }
 
-  for (const s of sleepLogs) {
+  for (const s of allSleepLogs) {
     timeline.push({
       id: s.id,
       time: s.time,

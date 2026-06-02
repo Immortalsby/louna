@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 const BABY_ID = await getDefaultBabyId();
 
-export async function recordSleepEvent(event: "START" | "WAKE") {
+export async function recordSleepEvent(event: "START" | "WAKE" | "NIGHT_WAKE") {
   await prisma.sleepLog.create({
     data: {
       babyId: BABY_ID,
@@ -14,4 +14,5 @@ export async function recordSleepEvent(event: "START" | "WAKE") {
     },
   });
   revalidatePath("/sleep");
+  revalidatePath("/");
 }

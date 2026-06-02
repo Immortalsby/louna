@@ -1,6 +1,9 @@
 import { type NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { validateApiToken } from "@/lib/api-auth";
+import { fromZonedTime } from "date-fns-tz";
+import { TZ, parisStartOfDay } from "@/lib/timezone";
+import { subDays } from "date-fns";
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,14 +14,12 @@ export async function GET(request: NextRequest) {
     const where: Record<string, unknown> = {};
 
     if (date) {
-      const start = new Date(date + "T00:00:00.000Z");
-      const end = new Date(date + "T23:59:59.999Z");
+      const start = fromZonedTime(`${date}T00:00:00`, TZ);
+      const end = fromZonedTime(`${date}T23:59:59.999`, TZ);
       where.time = { gte: start, lte: end };
     } else if (days) {
       const d = parseInt(days, 10);
-      const start = new Date();
-      start.setDate(start.getDate() - d);
-      start.setHours(0, 0, 0, 0);
+      const start = parisStartOfDay(subDays(new Date(), d));
       where.time = { gte: start };
     }
 
@@ -53,7 +54,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Default babyId to first baby
     const firstBaby = await prisma.baby.findFirst();
     if (!firstBaby) {
       return Response.json(
