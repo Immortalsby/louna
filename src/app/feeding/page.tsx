@@ -78,6 +78,10 @@ export default async function FeedingPage({
     (f) => f.type === "SOLID"
   ).length;
 
+  const periodSupplementCount = feedingLogs.filter(
+    (f) => f.type === "SUPPLEMENT"
+  ).length;
+
   const periodTotalCount = feedingLogs.length;
 
   // Chart data: daily milk totals for 7d/30d views
@@ -148,11 +152,11 @@ export default async function FeedingPage({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <span className="text-xl">
-                        {log.type === "MILK" ? "🍼" : "🥣"}
+                        {log.type === "MILK" ? "🍼" : log.type === "SUPPLEMENT" ? "💊" : "🥣"}
                       </span>
                       <div>
                         <div className="text-sm font-medium text-gray-800">
-                          {log.type === "MILK" ? "奶" : "辅食"}
+                          {log.type === "MILK" ? "奶" : log.type === "SUPPLEMENT" ? "保健品" : "辅食"}
                         </div>
                         <div className="text-xs text-gray-500">
                           {log.type === "MILK"

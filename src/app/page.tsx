@@ -93,8 +93,8 @@ export default async function HomePage() {
     .filter((f) => f.type === "MILK" && f.ml)
     .reduce((sum, f) => sum + (f.ml ?? 0), 0);
 
-  // Count solid feeds
   const solidCount = feedingLogs.filter((f) => f.type === "SOLID").length;
+  const supplementCount = feedingLogs.filter((f) => f.type === "SUPPLEMENT").length;
 
   // Calculate sleep hours from paired START/WAKE events
   let totalSleepMs = 0;
@@ -119,7 +119,7 @@ export default async function HomePage() {
   type TimelineEvent = {
     id: string;
     time: Date;
-    type: "milk" | "solid" | "sleep" | "temp";
+    type: "milk" | "solid" | "supplement" | "sleep" | "temp";
     label: string;
     detail: string;
   };
@@ -134,6 +134,14 @@ export default async function HomePage() {
         type: "milk",
         label: "奶量",
         detail: `${f.ml ?? 0}ml`,
+      });
+    } else if (f.type === "SUPPLEMENT") {
+      timeline.push({
+        id: f.id,
+        time: f.time,
+        type: "supplement",
+        label: "保健品",
+        detail: `${f.food ?? ""}${f.amount ? ` ${f.amount}` : ""}`,
       });
     } else {
       timeline.push({
@@ -172,6 +180,7 @@ export default async function HomePage() {
   const typeIcon: Record<TimelineEvent["type"], string> = {
     milk: "🍼",
     solid: "🥣",
+    supplement: "💊",
     sleep: "😴",
     temp: "🌡️",
   };

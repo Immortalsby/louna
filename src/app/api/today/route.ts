@@ -32,6 +32,7 @@ export async function GET() {
 
     const milkFeeds = feedings.filter((f) => f.type === "MILK");
     const solidFeeds = feedings.filter((f) => f.type === "SOLID");
+    const supplements = feedings.filter((f) => f.type === "SUPPLEMENT");
     const totalMilkMl = milkFeeds.reduce((sum, f) => sum + (f.ml ?? 0), 0);
 
     // Sleep events for today
@@ -59,6 +60,7 @@ export async function GET() {
       milkFeeds: milkFeeds.length,
       totalMilkMl,
       solidFeeds: solidFeeds.length,
+      supplements: supplements.length,
       sleepEvents: sleepEvents.length,
       latestTemp: latestTemp
         ? { temp: latestTemp.temp, time: latestTemp.time }

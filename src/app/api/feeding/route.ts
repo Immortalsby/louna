@@ -75,9 +75,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { type, ml, food, amount, time, createdBy } = body;
 
-    if (!type || !["MILK", "SOLID"].includes(type)) {
+    if (!type || !["MILK", "SOLID", "SUPPLEMENT"].includes(type)) {
       return Response.json(
-        { error: "Invalid type. Must be MILK or SOLID." },
+        { error: "Invalid type. Must be MILK, SOLID, or SUPPLEMENT." },
         { status: 400 }
       );
     }

@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
-type FeedingType = "MILK" | "SOLID";
+type FeedingType = "MILK" | "SOLID" | "SUPPLEMENT";
 
 export function AddFeeding() {
   const router = useRouter();
@@ -39,8 +39,8 @@ export function AddFeeding() {
       setError("请输入有效的奶量");
       return;
     }
-    if (type === "SOLID" && !food.trim()) {
-      setError("请输入食物名称");
+    if ((type === "SOLID" || type === "SUPPLEMENT") && !food.trim()) {
+      setError(type === "SUPPLEMENT" ? "请输入保健品名称" : "请输入食物名称");
       return;
     }
 
@@ -150,6 +150,17 @@ export function AddFeeding() {
                 >
                   🥣 辅食
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setType("SUPPLEMENT")}
+                  className={`flex-1 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    type === "SUPPLEMENT"
+                      ? "bg-white text-[var(--primary)] shadow-sm"
+                      : "text-gray-500"
+                  }`}
+                >
+                  💊 保健品
+                </button>
               </div>
 
               {/* Milk input */}
@@ -169,18 +180,18 @@ export function AddFeeding() {
                 </div>
               )}
 
-              {/* Solid food inputs */}
-              {type === "SOLID" && (
+              {/* Solid food / supplement inputs */}
+              {(type === "SOLID" || type === "SUPPLEMENT") && (
                 <>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      食物名称
+                      {type === "SUPPLEMENT" ? "保健品名称" : "食物名称"}
                     </label>
                     <input
                       type="text"
                       value={food}
                       onChange={(e) => setFood(e.target.value)}
-                      placeholder="例如: 米糊"
+                      placeholder={type === "SUPPLEMENT" ? "例如: 维生素D" : "例如: 米糊"}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-light)] focus:border-[var(--primary)]"
                     />
                   </div>
