@@ -87,6 +87,16 @@ export function PhotoGallery({ photos }: { photos: MediaItem[] }) {
                 autoPlay
                 playsInline
               />
+            ) : selected.mediaType === "LIVE_PHOTO" && selected.videoUrl ? (
+              <video
+                src={selected.videoUrl}
+                poster={selected.url}
+                className="max-w-full max-h-[80vh] rounded-lg"
+                controls
+                autoPlay
+                loop
+                playsInline
+              />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img
