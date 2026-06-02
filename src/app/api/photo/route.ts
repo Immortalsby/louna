@@ -31,6 +31,43 @@ export async function GET(request: Request) {
   return NextResponse.json({ photos: photosWithUrl, total, limit, offset });
 }
 
+export async function PATCH(request: Request) {
+  if (!validateApiToken(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const { id, takenAt, caption } = body;
+
+  if (!id || typeof id !== "string") {
+    return NextResponse.json({ error: "id is required" }, { status: 400 });
+  }
+
+  const data: Record<string, unknown> = {};
+  if (takenAt) data.takenAt = new Date(takenAt);
+  if (caption !== undefined) data.caption = caption;
+
+  if (Object.keys(data).length === 0) {
+    return NextResponse.json(
+      { error: "Nothing to update" },
+      { status: 400 }
+    );
+  }
+
+  const photo = await prisma.photo.update({
+    where: { id },
+    data,
+  });
+
+  return NextResponse.json({
+    ...photo,
+    url: `${PHOTOS_BASE_URL}/${photo.filename}`,
+    videoUrl: photo.videoFilename
+      ? `${PHOTOS_BASE_URL}/${photo.videoFilename}`
+      : null,
+  });
+}
+
 export async function POST(request: Request) {
   if (!validateApiToken(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
