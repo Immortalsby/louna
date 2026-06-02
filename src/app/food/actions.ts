@@ -30,6 +30,29 @@ export async function addFood(formData: FormData) {
   return { success: true };
 }
 
+export async function addFoodNotTried(formData: FormData) {
+  const food = formData.get("food") as string;
+
+  if (!food || food.trim().length === 0) {
+    return { error: "请输入食物名称" };
+  }
+
+  const now = new Date();
+
+  await prisma.foodSafety.create({
+    data: {
+      babyId: BABY_ID,
+      food: food.trim(),
+      introduced: now,
+      observationEnd: now,
+      status: "NOT_TRIED",
+    },
+  });
+
+  revalidatePath("/food");
+  return { success: true };
+}
+
 export async function markFoodSafe(id: string) {
   await prisma.foodSafety.update({
     where: { id },

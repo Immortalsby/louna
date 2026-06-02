@@ -53,6 +53,12 @@ export async function GET() {
       orderBy: { introduced: "desc" },
     });
 
+    // Foods not yet tried
+    const foodsNotTried = await prisma.foodSafety.findMany({
+      where: { babyId: firstBaby.id, status: "NOT_TRIED" },
+      orderBy: { createdAt: "desc" },
+    });
+
     return Response.json({
       date: todayStart.toISOString().split("T")[0],
       baby: { name: firstBaby.name, birthday: firstBaby.birthday },
@@ -70,6 +76,7 @@ export async function GET() {
         introduced: f.introduced,
         observationEnd: f.observationEnd,
       })),
+      foodsNotTried: foodsNotTried.map((f) => f.food),
     });
   } catch (error) {
     console.error("Failed to generate today summary:", error);

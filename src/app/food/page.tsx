@@ -38,6 +38,7 @@ export default async function FoodPage() {
 
   const observingFoods = allFoods.filter((f) => f.status === "OBSERVING");
   const safeFoods = allFoods.filter((f) => f.status === "SAFE");
+  const notTriedFoods = allFoods.filter((f) => f.status === "NOT_TRIED");
   const allFoodNames = new Set(allFoods.map((f) => f.food));
 
   const suggestedNotTried = SUGGESTED_FOODS.map((group) => ({
@@ -108,6 +109,27 @@ export default async function FoodPage() {
         </Card>
       </section>
 
+      {/* Not tried foods section */}
+      {notTriedFoods.length > 0 && (
+        <section className="mt-6">
+          <h2 className="text-base font-semibold text-gray-800 mb-3">
+            📋 待尝试
+          </h2>
+          <Card>
+            <div className="flex flex-wrap gap-2">
+              {notTriedFoods.map((food) => (
+                <span
+                  key={food.id}
+                  className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-slate-50 text-slate-600 border border-slate-200"
+                >
+                  {food.food}
+                </span>
+              ))}
+            </div>
+          </Card>
+        </section>
+      )}
+
       {/* Suggested foods section */}
       {suggestedNotTried.length > 0 && (
         <section className="mt-6">
@@ -165,13 +187,17 @@ export default async function FoodPage() {
                     ? "bg-green-400"
                     : food.status === "OBSERVING"
                       ? "bg-amber-400"
-                      : "bg-red-400";
+                      : food.status === "NOT_TRIED"
+                        ? "bg-slate-300"
+                        : "bg-red-400";
                 const statusLabel =
                   food.status === "SAFE"
                     ? "安全"
                     : food.status === "OBSERVING"
                       ? "观察中"
-                      : "有反应";
+                      : food.status === "NOT_TRIED"
+                        ? "待尝试"
+                        : "有反应";
                 return (
                   <div key={food.id} className="relative pl-10">
                     <div
@@ -193,7 +219,9 @@ export default async function FoodPage() {
                               ? "bg-green-50 text-green-600"
                               : food.status === "OBSERVING"
                                 ? "bg-amber-50 text-amber-600"
-                                : "bg-red-50 text-red-600"
+                                : food.status === "NOT_TRIED"
+                                  ? "bg-slate-50 text-slate-500"
+                                  : "bg-red-50 text-red-600"
                           }`}
                         >
                           {statusLabel}

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
     const where: Record<string, unknown> = {};
 
-    if (status && ["OBSERVING", "SAFE", "REACTED"].includes(status)) {
+    if (status && ["NOT_TRIED", "OBSERVING", "SAFE", "REACTED"].includes(status)) {
       where.status = status;
     }
 
@@ -58,20 +58,33 @@ export async function POST(request: NextRequest) {
     });
 
     if (existing) {
-      // Update existing record
+      const newStatus = status ?? existing.status;
+      const updateData: Record<string, unknown> = { status: newStatus };
+
+      // NOT_TRIED → OBSERVING: set real introduced date and observation window
+      if (existing.status === "NOT_TRIED" && newStatus === "OBSERVING") {
+        const now = new Date();
+        const obsEnd = new Date(now);
+        obsEnd.setDate(obsEnd.getDate() + 3);
+        updateData.introduced = now;
+        updateData.observationEnd = obsEnd;
+      }
+
       const updated = await prisma.foodSafety.update({
         where: { id: existing.id },
-        data: {
-          status: status ?? existing.status,
-        },
+        data: updateData,
       });
       return Response.json(updated);
     }
 
     // Create new food safety record
     const now = new Date();
+    const effectiveStatus = status ?? "OBSERVING";
+
     const observationEnd = new Date(now);
-    observationEnd.setDate(observationEnd.getDate() + 3);
+    if (effectiveStatus !== "NOT_TRIED") {
+      observationEnd.setDate(observationEnd.getDate() + 3);
+    }
 
     const record = await prisma.foodSafety.create({
       data: {
@@ -79,7 +92,7 @@ export async function POST(request: NextRequest) {
         food,
         introduced: now,
         observationEnd,
-        status: status ?? "OBSERVING",
+        status: effectiveStatus,
       },
     });
 
