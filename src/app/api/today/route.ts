@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import { nowParis, parisStartOfDay, parisEndOfDay } from "@/lib/timezone";
+import { nowParis, parisStartOfDay, parisEndOfDay, todayDateString } from "@/lib/timezone";
 
 export async function GET() {
   try {
@@ -60,7 +60,7 @@ export async function GET() {
     });
 
     return Response.json({
-      date: todayStart.toISOString().split("T")[0],
+      date: todayDateString(),
       baby: { name: firstBaby.name, birthday: firstBaby.birthday },
       age: `${ageMonths}m ${remainingDays}d`,
       milkFeeds: milkFeeds.length,
